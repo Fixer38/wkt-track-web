@@ -18,6 +18,10 @@ namespace wkt_track_backend
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseUrls("http://*:2000");
+                    webBuilder.UseStartup<Startup>(); 
+                });
     }
 }
