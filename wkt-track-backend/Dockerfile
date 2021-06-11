@@ -1,20 +1,20 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+# ./Backend/Dockerfile
+# Récupérer dotnetcore sdk version 3.1
+FROM mcr.microsoft.com/dotnet/sdk:5.0
+
+# Copie du script permettant l'initalisation dans le container
+COPY ./entrypoint.sh /
+# Installation de dotnet-ef permettant la migration
+RUN dotnet tool install --global dotnet-ef
+# Ajout de dotnet-ef au path pour l'utilisation de la commande
+ENV PATH="${PATH}:/root/.dotnet/tools"
+# Rendre le script exécutable par le container
+RUN sed -i 's/\r//' /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Création du dossier ou l'application réside
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
-COPY ["./wkt-track-backend.csproj", "wkt-track-backend/"]
-RUN dotnet restore "./wkt-track-backend.csproj"
-COPY . .
-WORKDIR "/src/wkt-track-backend"
-RUN dotnet build "wkt-track-backend.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "wkt-track-backend.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "wkt-track-backend.dll"]
+# Ouverture du port interne du container
+EXPOSE 2000
+# Exécution du script d'initialisation
+CMD /entrypoint.sh
