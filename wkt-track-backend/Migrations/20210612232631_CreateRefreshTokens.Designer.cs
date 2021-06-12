@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using wkt_track_backend.Data;
@@ -9,9 +10,10 @@ using wkt_track_backend.Data;
 namespace wkt_track_backend.Migrations
 {
     [DbContext(typeof(WktDbContext))]
-    partial class WktDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210612232631_CreateRefreshTokens")]
+    partial class CreateRefreshTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
