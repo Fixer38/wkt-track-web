@@ -37,6 +37,17 @@ namespace wkt_track_backend
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<WktDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    name: "Frontend Policy",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3002").AllowCredentials().AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
                 
             services.AddControllers();
             services.AddSwaggerGen(c =>
