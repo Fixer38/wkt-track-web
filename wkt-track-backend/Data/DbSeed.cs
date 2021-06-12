@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace wkt_track_backend.Data
 {
-    public class DbSeed
+    public static class DbSeed
     {
         public static void Seed(
             UserManager<IdentityUser> userManager,
