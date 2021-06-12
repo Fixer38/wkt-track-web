@@ -6,11 +6,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using wkt_track_backend.Data;
+using wkt_track_backend.Models;
 
 namespace wkt_track_backend.Controllers
 {
@@ -51,16 +53,48 @@ namespace wkt_track_backend.Controllers
             return Ok("Creation of User is a success");
         }
 
+        [HttpPost]
+        public async Task<object> Login([FromBody] LoginDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
 
-        private async Task<object> GenerateJwt(string email, string username, IdentityUser user)
+            if (!result.Succeeded)
+            {
+                return Unauthorized("The username or password is incorrect");
+            }
+
+            var appUser = _userManager.Users.SingleOrDefault(user => user.Email == model.Email);
+            var refreshToken = GenerateRefreshToken();
+            Response.Cookies.Append(
+                "refresh-token",
+                refreshToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
+                });
+            await _ctx.RefreshTokens.AddAsync(new RefreshToken
+            {
+                Token = refreshToken,
+                ValidUntil = DateTime.Now.AddDays(7),
+                UserId = appUser?.Id
+            });
+            await _ctx.SaveChangesAsync();
+            return await GenerateJwt(appUser);
+        }
+
+
+        private async Task<object> GenerateJwt(IdentityUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
             };
 
             var key = new SymmetricSecurityKey(
@@ -70,17 +104,32 @@ namespace wkt_track_backend.Controllers
             var audience = _configuration["JwtToken:Issuer"];
             var jwtValidity = DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["JwtToken:TokenExpiry"]));
 
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token");
-            claimsIdentity.AddClaims(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            var claimsIdentity = new ClaimsIdentity(claims, "Token");
+            claimsIdentity.AddClaims(roles.Select(role => new Claim("Roles", role)));
 
             var token = new JwtSecurityToken(
                 issuer,
                 audience,
+                claimsIdentity.Claims,
                 expires: jwtValidity,
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private static string GenerateRefreshToken()
+        {
+            var rand = new Random();
+
+            const string pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789+.";
+            var refreshToken = new char[32];
+            for (int i = 0; i < 32; i++)
+            {
+                refreshToken[i] = pool[rand.Next(pool.Length)];
+            }
+
+            return new string(refreshToken);
         }
     }
 
@@ -93,5 +142,13 @@ namespace wkt_track_backend.Controllers
         [Required]
         [StringLength(30, ErrorMessage = "Password minimal length must be 6", MinimumLength = 6)]
         public string Password { get; set; }
+    }
+
+    public class LoginDto
+    {
+         [Required]
+         public string Email { get; set; }
+         [Required]
+         public string Password { get; set; }
     }
 }
