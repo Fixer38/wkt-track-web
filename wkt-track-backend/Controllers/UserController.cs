@@ -85,6 +85,37 @@ namespace wkt_track_backend.Controllers
             return await GenerateJwt(appUser);
         }
 
+        [HttpPost]
+        public async Task<object> RefreshToken()
+        {
+            var receivedRefreshToken = Request.Cookies["refresh-token"];
+            if (receivedRefreshToken == null) return BadRequest("No Refresh Token");
+
+            var storedRefreshToken = _ctx.RefreshTokens.First(rft => rft.Token== receivedRefreshToken);
+            if (storedRefreshToken.ValidUntil <= DateTime.Now) return BadRequest("Refresh Token Expired");
+
+            var newRefreshToken = GenerateRefreshToken();
+            var appUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId);
+            _ctx.RefreshTokens.Remove(storedRefreshToken);
+            Response.Cookies.Append(
+                "refresh-token",
+                newRefreshToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
+                });
+            await _ctx.RefreshTokens.AddAsync(new RefreshToken
+            {
+                Token = newRefreshToken,
+                ValidUntil = DateTime.Now.AddDays(7),
+                UserId = appUser.Id
+            });
+            
+            await _ctx.SaveChangesAsync();
+            return await GenerateJwt(appUser);
+        }
 
         private async Task<object> GenerateJwt(IdentityUser user)
         {
