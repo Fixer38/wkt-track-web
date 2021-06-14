@@ -37,5 +37,20 @@ services:
     networks:
       - wkt-dev
 
+  react_image:
+    image: react
+    tty: true
+    ports: 
+      - "3002:3000"
+    volumes:
+      - './wkt-track-frontend:/app'
+      - '/app/node_modules'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build:
+      ./wkt-track-frontend
+    networks:
+      - wkt-dev
+
 volumes:
   db_volume:
