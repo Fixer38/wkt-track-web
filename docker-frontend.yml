@@ -9,7 +9,7 @@ services:
     image: react
     tty: true
     ports: 
-      - "3001:3000"
+      - "3002:3000"
     volumes:
       - './wkt-track-frontend:/app'
       - '/app/node_modules'
