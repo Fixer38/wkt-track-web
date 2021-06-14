@@ -42,7 +42,7 @@ namespace wkt_track_backend
                     name: "Frontend Policy",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3002").AllowCredentials().AllowAnyHeader()
+                        builder.WithOrigins("http://localhost:3000").AllowCredentials().AllowAnyHeader()
                             .AllowAnyMethod();
                     });
             });
