@@ -1,6 +1,6 @@
 import AuthService from "../services/auth";
 import {AppDispatch} from "../store";
-import {REGISTER_FAIL, REGISTER_SUCCESS, SET_MESSAGE} from "./types";
+import {LOGIN_SUCCESS, REGISTER_FAIL, REGISTER_SUCCESS, SET_MESSAGE} from "./types";
 import {AxiosError, AxiosResponse} from "axios";
 
 export const register = (username: String, email: String, password: String) => (dispatch: AppDispatch) => {
@@ -30,6 +30,19 @@ export const register = (username: String, email: String, password: String) => (
         });
 
         return Promise.reject();
+      }
+  )
+}
+
+export const login = (username: String, password: String) => (dispatch: AppDispatch) => {
+  return AuthService.login(username, password).then(
+      (jwt_token) => {
+        dispatch({
+          type: LOGIN_SUCCESS,
+          payload: { jwt: jwt_token },
+        });
+
+        return Promise.resolve();
       }
   )
 }
