@@ -1,6 +1,6 @@
 import AuthService from "../services/auth";
 import {AppDispatch} from "../store";
-import {LOGIN_SUCCESS, REGISTER_FAIL, REGISTER_SUCCESS, SET_MESSAGE} from "./types";
+import {LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, REGISTER_FAIL, REGISTER_SUCCESS, SET_MESSAGE} from "./types";
 import {AxiosError, AxiosResponse} from "axios";
 
 export const register = (username: String, email: String, password: String) => (dispatch: AppDispatch) => {
@@ -43,6 +43,27 @@ export const login = (username: String, password: String) => (dispatch: AppDispa
         });
 
         return Promise.resolve();
+      },
+      (error) => {
+        const message = (error.response.data)
+        dispatch({
+          type: LOGIN_FAIL
+        });
+
+        dispatch({
+          type: SET_MESSAGE,
+          payload: message
+        });
+
+        return Promise.reject();
       }
   )
+}
+
+export const logout = () => (dispatch: AppDispatch) => {
+  AuthService.logout();
+
+  dispatch({
+    type: LOGOUT,
+  });
 }
