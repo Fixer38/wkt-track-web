@@ -1,7 +1,7 @@
 import AuthService from "../services/auth";
 import {AppDispatch} from "../store";
 import {LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, REGISTER_FAIL, REGISTER_SUCCESS, SET_MESSAGE} from "./types";
-import {AxiosError, AxiosResponse} from "axios";
+import {AxiosResponse} from "axios";
 
 export const register = (username: String, email: String, password: String) => (dispatch: AppDispatch) => {
   return AuthService.register(username, email, password).then(
