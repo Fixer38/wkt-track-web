@@ -7,7 +7,8 @@ export const register = (username: String, email: String, password: String) => (
   return AuthService.register(username, email, password).then(
       (response: AxiosResponse) => {
         dispatch({
-          type: REGISTER_SUCCESS
+          type: REGISTER_SUCCESS,
+          payload: ""
         });
 
         dispatch({
@@ -22,6 +23,7 @@ export const register = (username: String, email: String, password: String) => (
 
         dispatch({
           type: REGISTER_FAIL,
+          payload: ""
         });
 
         dispatch({
@@ -39,7 +41,7 @@ export const login = (username: String, password: String) => (dispatch: AppDispa
       (jwt_token) => {
         dispatch({
           type: LOGIN_SUCCESS,
-          payload: { jwt: jwt_token },
+          payload: jwt_token,
         });
 
         return Promise.resolve();
@@ -47,7 +49,8 @@ export const login = (username: String, password: String) => (dispatch: AppDispa
       (error) => {
         const message = (error.response.data)
         dispatch({
-          type: LOGIN_FAIL
+          type: LOGIN_FAIL,
+          payload: ""
         });
 
         dispatch({
@@ -65,5 +68,6 @@ export const logout = () => (dispatch: AppDispatch) => {
 
   dispatch({
     type: LOGOUT,
+    payload: ""
   });
 }
