@@ -30,6 +30,12 @@ export const userSlice = createSlice({
 
   },
   extraReducers: {
+    [signupUser.fulfilled]: (state, { payload }) => {
+      state.isFetching = false;
+      state.isSuccess = true;
+      state.email = payload.email;
+      state.username = payload.username;
+    }
 
   },
 })
