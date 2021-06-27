@@ -15,35 +15,10 @@ interface UserInterface {
   isSuccess: boolean,
   errorMessage: String
 }
-
-export const userSlice = createSlice({
-  name: 'user',
-  initialState: {
-    username: '',
-    email: '',
-    isFetching: false,
-    isError: false,
-    isSuccess: false,
-    errorMessage: '',
-  },
-  reducers: {
-
-  },
-  extraReducers: {
-    [signupUser.fulfilled]: (state, { payload }) => {
-      state.isFetching = false;
-      state.isSuccess = true;
-      state.email = payload.email;
-      state.username = payload.username;
-    }
-
-  },
-})
-
 interface signupUserReturn {
-  data: String,
-  username: String,
-  email: String
+  data: string,
+  username: string,
+  email: string
 }
 
 interface ISignupUser {
@@ -94,5 +69,28 @@ export const signupUser = createAsyncThunk<
       }
     }
 )
+
+export const userSlice = createSlice({
+  name: 'user',
+  initialState: {
+    username: '',
+    email: '',
+    isFetching: false,
+    isError: false,
+    isSuccess: false,
+    errorMessage: '',
+  },
+  reducers: {
+
+  },
+  extraReducers: (builder) => {
+    builder.addCase(signupUser.fulfilled, (state, { payload }) => {
+      state.isFetching = false;
+      state.isSuccess = true;
+      state.email = payload.email;
+      state.username = payload.username;
+    })
+  },
+})
 
 export const userSelector = (state: RootState) => state.user;
