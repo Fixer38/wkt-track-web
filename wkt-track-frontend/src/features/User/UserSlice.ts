@@ -13,8 +13,9 @@ interface UserInterface {
   isFetching: boolean,
   isError: boolean,
   isSuccess: boolean,
-  errorMessage: String
+  errorMessage: string
 }
+
 interface signupUserReturn {
   data: string,
   username: string,
@@ -28,7 +29,7 @@ interface ISignupUser {
 }
 
 interface signupUserError {
-  errorMessage: String
+  errorMessage: string
 }
 
 export const signupUser = createAsyncThunk<
@@ -65,7 +66,7 @@ export const signupUser = createAsyncThunk<
       }
       catch (e) {
         console.log("API error: ", e.response.data);
-        return thunkApi.rejectWithValue(e.response.data);
+        return thunkApi.rejectWithValue(e.response.data as signupUserError);
       }
     }
 )
@@ -89,6 +90,20 @@ export const userSlice = createSlice({
       state.isSuccess = true;
       state.email = payload.email;
       state.username = payload.username;
+    });
+    builder.addCase(signupUser.pending, (state) => {
+      state.isFetching = true;
+    });
+    builder.addCase(signupUser.rejected, (state, action) => {
+      state.isFetching = false;
+      state.isError = true;
+      if(action.payload) {
+        const payload = action.payload as signupUserError;
+        state.errorMessage = payload.errorMessage;
+      }
+      else {
+        state.errorMessage = action.error as string;
+      }
     })
   },
 })
