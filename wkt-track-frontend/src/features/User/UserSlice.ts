@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from '../../services/api';
 
-const API_URL = "http://localhost:2000/user"
+const API_URL = "http://localhost:8080/api/user/"
 
 interface RootState {
   user: UserInterface
@@ -48,16 +48,15 @@ export const signupUser = createAsyncThunk<
       try {
         const response = await axios.post(
             API_URL + "register", {
-              username,
-              email,
-              password,
+              "Username": username,
+              "Email": email,
+              "Password": password,
             }
         )
         let data = await response.data;
         console.log(data);
 
         if(response.status === 200) {
-          localStorage.setItem('jwt_token', data);
           return { ...data, username: username, email: email } as signupUserReturn;
         }
         else {
@@ -65,8 +64,8 @@ export const signupUser = createAsyncThunk<
         }
       }
       catch (e) {
-        console.log("API error: ", e.response.data);
-        return thunkApi.rejectWithValue(e.response.data as signupUserError);
+        console.log("API error: ", e);
+        return thunkApi.rejectWithValue(e as signupUserError);
       }
     }
 )
