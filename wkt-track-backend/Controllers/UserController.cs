@@ -167,9 +167,9 @@ namespace wkt_track_backend.Controllers
     public class RegisterDto
     {
         [Required]
-        public string Email { get; set; }
-        [Required]
         public string Username { get; set; }
+        [Required]
+        public string Email { get; set; }
         [Required]
         [StringLength(30, ErrorMessage = "Password minimal length must be 6", MinimumLength = 6)]
         public string Password { get; set; }
