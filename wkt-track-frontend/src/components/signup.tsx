@@ -1,7 +1,7 @@
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import { useHistory } from "react-router-dom";
-import {userSelector} from "../features/User/UserSlice";
+import {clearState, signupUser, userSelector} from "../features/User/UserSlice";
 import {useEffect} from "react";
 import { Fragment } from "react";
 

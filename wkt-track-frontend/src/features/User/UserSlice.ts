@@ -82,7 +82,13 @@ export const userSlice = createSlice({
     errorMessage: '',
   },
   reducers: {
+    clearState: (state) => {
+      state.isError = false;
+      state.isSuccess = false;
+      state.isFetching = false;
 
+      return state;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(signupUser.fulfilled, (state, { payload }) => {
@@ -109,3 +115,5 @@ export const userSlice = createSlice({
 })
 
 export const userSelector = (state: RootState) => state.user;
+
+export const { clearState } = userSlice.actions;
