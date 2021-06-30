@@ -1,5 +1,8 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from '../../services/api';
+import {sign} from "crypto";
+import {AxiosError} from "axios";
+import thunk from "redux-thunk";
 
 const API_URL = "http://localhost:8080/api/user/"
 
@@ -13,7 +16,7 @@ interface UserInterface {
   isFetching: boolean,
   isError: boolean,
   isSuccess: boolean,
-  errorMessage: string
+  errorMessage: string | undefined
 }
 
 interface signupUserReturn {
@@ -39,11 +42,11 @@ export const signupUser = createAsyncThunk<
       extra: {
         jwt: string
       }
-      rejectedValue: signupUserError
+      rejectValue: signupUserError
     }
     >(
     'users/signupUser',
-    async (form_data: ISignupUser, thunkApi) => {
+    async (form_data, thunkApi) => {
       const { username, email, password } = form_data
       try {
         const response = await axios.post(
@@ -55,17 +58,21 @@ export const signupUser = createAsyncThunk<
         )
         let data = await response.data;
         console.log(data);
-
-        if(response.status === 200) {
-          return { ...data, username: username, email: email } as signupUserReturn;
+        if(response.status === 200)
+        {
+          return { ...data, username: username, email: email };
         }
         else {
           return thunkApi.rejectWithValue(data as signupUserError);
         }
       }
-      catch (e) {
-        console.log("API error: ", e);
-        return thunkApi.rejectWithValue(e as signupUserError);
+      catch (err) {
+        console.log("API error: ", err);
+        let error: AxiosError<signupUserError> = err;
+        if(!error.response) {
+          throw err
+        }
+        return thunkApi.rejectWithValue(error.response.data);
       }
     }
 )
@@ -79,7 +86,7 @@ export const userSlice = createSlice({
     isError: false,
     isSuccess: false,
     errorMessage: '',
-  },
+  } as UserInterface,
   reducers: {
     clearState: (state) => {
       state.isError = false;
@@ -100,14 +107,14 @@ export const userSlice = createSlice({
       state.isFetching = true;
     });
     builder.addCase(signupUser.rejected, (state, action) => {
-      state.isFetching = false;
       state.isError = true;
+      state.isSuccess = false;
+      state.isFetching = false;
       if(action.payload) {
-        const payload = action.payload as signupUserError;
-        state.errorMessage = payload.errorMessage;
+        state.errorMessage = action.payload.errorMessage;
       }
       else {
-        state.errorMessage = action.error as string;
+        state.errorMessage = action.error.message;
       }
     })
   },
