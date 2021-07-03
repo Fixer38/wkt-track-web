@@ -88,6 +88,9 @@ const Login = () => {
             Login
           </button>
         </form>
+        {errorMessage &&
+        <div>{errorMessage}</div>
+        }
       </div>
     </Fragment>
   )

@@ -16,7 +16,7 @@ interface UserInterface {
   isFetching: boolean,
   isError: boolean,
   isSuccess: boolean,
-  errorMessage: string | undefined
+  errorMessage: string
 }
 
 interface signupUserReturn {
@@ -88,7 +88,7 @@ export const loginUser = createAsyncThunk<
     LoginUserReturn,
     ILoginUser,
     {
-      rejectValue: UserError
+      rejectValue: string
     }
     >(
         'user/loginUser',
@@ -106,18 +106,16 @@ export const loginUser = createAsyncThunk<
             if(response.status === 200)
             {
               localStorage.setItem("jwt_token", data);
-              return { ...data, username: email}
-            }
-            else {
-              return thunkApi.rejectWithValue(data as UserError);
+              return { ...data, email: email}
             }
           }
           catch (err) {
             console.log("API error: ", err);
-            let error: AxiosError<UserError> = err;
+            let error: AxiosError<string> = err;
             if(!error.response) {
               throw err
             }
+            console.log(error.response.data);
             return thunkApi.rejectWithValue(error.response.data);
           }
     }
@@ -143,7 +141,7 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Singup fulfilled
+    // Signup fulfilled
     builder.addCase(signupUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
       state.isSuccess = true;
@@ -163,7 +161,7 @@ export const userSlice = createSlice({
         state.errorMessage = action.payload.errorMessage;
       }
       else {
-        state.errorMessage = action.error.message;
+        state.errorMessage = action.error.message!;
       }
     });
     // LOGIN
@@ -174,18 +172,19 @@ export const userSlice = createSlice({
       state.email = payload.email;
     });
     // login pending
-    builder.addCase(loginUser.pending, (state, { payload }) => {
+    builder.addCase(loginUser.pending, (state) => {
       state.isFetching = true;
     });
     // login failed
     builder.addCase(loginUser.rejected, (state, action) => {
       state.isError = true;
+      state.isFetching = false;
       state.isSuccess = false;
       if(action.payload) {
-        state.errorMessage = action.payload.errorMessage;
+        state.errorMessage = action.payload;
       }
       else {
-        state.errorMessage = action.error.message;
+        state.errorMessage = action.error.message!;
       }
     });
   },
