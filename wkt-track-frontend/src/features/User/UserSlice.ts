@@ -37,11 +37,11 @@ interface UserError {
 
 interface LoginUserReturn {
   data: string,
-  username: string,
+  email: string,
 }
 
-interface ILoginuser {
-  username: String,
+interface ILoginUser {
+  email: String,
   password: String,
 }
 
@@ -86,18 +86,18 @@ export const signupUser = createAsyncThunk<
 
 export const loginUser = createAsyncThunk<
     LoginUserReturn,
-    ILoginuser,
+    ILoginUser,
     {
       rejectValue: UserError
     }
     >(
         'user/loginUser',
     async (form_data, thunkApi) => {
-          const { username, password } = form_data;
+          const { email, password } = form_data;
           try {
             const response = await axios.post(
                 API_URL + "login", {
-                  "Username": username,
+                  "Email": email,
                   "Password": password,
                 }
             )
@@ -106,7 +106,7 @@ export const loginUser = createAsyncThunk<
             if(response.status === 200)
             {
               localStorage.setItem("jwt_token", data);
-              return { ...data, username: username}
+              return { ...data, username: email}
             }
             else {
               return thunkApi.rejectWithValue(data as UserError);
@@ -171,7 +171,7 @@ export const userSlice = createSlice({
     builder.addCase(loginUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
       state.isSuccess = true;
-      state.username = payload.username;
+      state.email = payload.email;
     });
     // login pending
     builder.addCase(loginUser.pending, (state, { payload }) => {
