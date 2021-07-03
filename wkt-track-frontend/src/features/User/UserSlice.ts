@@ -143,15 +143,18 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Singup fulfilled
     builder.addCase(signupUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
       state.isSuccess = true;
       state.email = payload.email;
       state.username = payload.username;
     });
+    // signup pending
     builder.addCase(signupUser.pending, (state) => {
       state.isFetching = true;
     });
+    // signup failed
     builder.addCase(signupUser.rejected, (state, action) => {
       state.isError = true;
       state.isSuccess = false;
@@ -162,7 +165,29 @@ export const userSlice = createSlice({
       else {
         state.errorMessage = action.error.message;
       }
-    })
+    });
+    // LOGIN
+    // login fulfilled
+    builder.addCase(loginUser.fulfilled, (state, { payload }) => {
+      state.isFetching = false;
+      state.isSuccess = true;
+      state.username = payload.username;
+    });
+    // login pending
+    builder.addCase(loginUser.pending, (state, { payload }) => {
+      state.isFetching = true;
+    });
+    // login failed
+    builder.addCase(loginUser.rejected, (state, action) => {
+      state.isError = true;
+      state.isSuccess = false;
+      if(action.payload) {
+        state.errorMessage = action.payload.errorMessage;
+      }
+      else {
+        state.errorMessage = action.error.message;
+      }
+    });
   },
 })
 
