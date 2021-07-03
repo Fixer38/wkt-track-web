@@ -1,8 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from '../../services/api';
-import {sign} from "crypto";
 import {AxiosError} from "axios";
-import thunk from "redux-thunk";
 
 const API_URL = "http://localhost:8080/api/user/"
 
@@ -31,10 +29,6 @@ interface ISignupUser {
   password: String,
 }
 
-interface UserError {
-  errorMessage: string
-}
-
 interface LoginUserReturn {
   data: string,
   email: string,
@@ -49,7 +43,7 @@ export const signupUser = createAsyncThunk<
     signupUserReturn,
     ISignupUser,
     {
-      rejectValue: UserError
+      rejectValue: string
     }
     >(
     'user/signupUser',
@@ -70,15 +64,16 @@ export const signupUser = createAsyncThunk<
           return { ...data, username: username, email: email };
         }
         else {
-          return thunkApi.rejectWithValue(data as UserError);
+          return thunkApi.rejectWithValue(data);
         }
       }
       catch (err) {
         console.log("API error: ", err);
-        let error: AxiosError<UserError> = err;
+        let error: AxiosError<string> = err;
         if(!error.response) {
           throw err
         }
+        console.log(error.response.data);
         return thunkApi.rejectWithValue(error.response.data);
       }
     }
@@ -158,7 +153,7 @@ export const userSlice = createSlice({
       state.isSuccess = false;
       state.isFetching = false;
       if(action.payload) {
-        state.errorMessage = action.payload.errorMessage;
+        state.errorMessage = action.payload;
       }
       else {
         state.errorMessage = action.error.message!;

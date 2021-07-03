@@ -116,6 +116,9 @@ const Signup = () => {
               Signup
             </button>
           </form>
+          {errorMessage &&
+          <div>{errorMessage}</div>
+          }
         </div>
       </Fragment>
   )
