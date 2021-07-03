@@ -31,18 +31,25 @@ interface ISignupUser {
   password: String,
 }
 
-interface signupUserError {
+interface UserError {
   errorMessage: string
+}
+
+interface LoginUserReturn {
+  data: string,
+  username: string,
+}
+
+interface ILoginuser {
+  username: String,
+  password: String,
 }
 
 export const signupUser = createAsyncThunk<
     signupUserReturn,
     ISignupUser,
     {
-      extra: {
-        jwt: string
-      }
-      rejectValue: signupUserError
+      rejectValue: UserError
     }
     >(
     'user/signupUser',
@@ -63,17 +70,56 @@ export const signupUser = createAsyncThunk<
           return { ...data, username: username, email: email };
         }
         else {
-          return thunkApi.rejectWithValue(data as signupUserError);
+          return thunkApi.rejectWithValue(data as UserError);
         }
       }
       catch (err) {
         console.log("API error: ", err);
-        let error: AxiosError<signupUserError> = err;
+        let error: AxiosError<UserError> = err;
         if(!error.response) {
           throw err
         }
         return thunkApi.rejectWithValue(error.response.data);
       }
+    }
+)
+
+export const loginUser = createAsyncThunk<
+    LoginUserReturn,
+    ILoginuser,
+    {
+      rejectValue: UserError
+    }
+    >(
+        'user/loginUser',
+    async (form_data, thunkApi) => {
+          const { username, password } = form_data;
+          try {
+            const response = await axios.post(
+                API_URL + "login", {
+                  "Username": username,
+                  "Password": password,
+                }
+            )
+            let data = await response.data;
+            console.log(data)
+            if(response.status === 200)
+            {
+              localStorage.setItem("jwt_token", data);
+              return { ...data, username: username}
+            }
+            else {
+              return thunkApi.rejectWithValue(data as UserError);
+            }
+          }
+          catch (err) {
+            console.log("API error: ", err);
+            let error: AxiosError<UserError> = err;
+            if(!error.response) {
+              throw err
+            }
+            return thunkApi.rejectWithValue(error.response.data);
+          }
     }
 )
 
