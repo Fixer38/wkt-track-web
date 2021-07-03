@@ -1,6 +1,6 @@
 import axios, {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 
-const API_URL = "http://localhost:2000/user/"
+const API_URL = "http://localhost:8080/api/user/"
 
 const api = axios.create({
   withCredentials: true
@@ -12,7 +12,7 @@ const api = axios.create({
 // With new jwt token, send back the original request
 // The refresh of the token will be done seamlessly for the end user
 // @ts-ignore
-api.interceptors.response.use(null, (error) => {
+/*api.interceptors.response.use(null, (error) => {
   // If the request hasn't been retried yet and status is 401
   if(
       error.config &&
@@ -74,6 +74,6 @@ const refreshToken = (axios: AxiosInstance, config: AxiosRequestConfig) => {
           }
         });
   });
-};
+};*/
 
 export default api;
