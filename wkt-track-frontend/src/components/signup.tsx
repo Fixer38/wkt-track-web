@@ -82,7 +82,7 @@ const Signup = () => {
               required
               {...register("username")}
             />
-
+            <div>{errors.username?.message}</div>
             <label
               htmlFor="email"
             >
@@ -95,6 +95,7 @@ const Signup = () => {
               required
               {...register("email")}
             />
+            <div>{errors.email?.message}</div>
 
             <label
                 htmlFor="password"
@@ -107,6 +108,8 @@ const Signup = () => {
               required
               {...register("password")}
             />
+            <div>{errors.password?.message}</div>
+
             <button
               type="submit"
               >

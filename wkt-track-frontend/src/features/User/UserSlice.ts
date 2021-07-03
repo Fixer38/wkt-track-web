@@ -45,7 +45,7 @@ export const signupUser = createAsyncThunk<
       rejectValue: signupUserError
     }
     >(
-    'users/signupUser',
+    'user/signupUser',
     async (form_data, thunkApi) => {
       const { username, email, password } = form_data
       try {
