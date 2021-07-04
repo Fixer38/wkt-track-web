@@ -7,6 +7,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from 'yup';
 import { Fragment } from "react";
 
+// Interface used by react-hook-form for the form types
 type FormValues = {
   username: string;
   email: string;
@@ -33,14 +34,18 @@ const validationSchema = Yup.object().shape({
 
 const Signup = () => {
   const dispatch = useDispatch();
+  // Define the userForm for react-hooks-form and adding the validation parameters contained in validationSchema
   const { register, formState: { errors }, handleSubmit } = useForm<FormValues>({
     resolver: yupResolver(validationSchema)
   });
   const history = useHistory();
 
+  // Get data from the user slice state
   const { isFetching, isSuccess, isError, errorMessage } = useSelector(
       userSelector
   );
+  // Used on submit of the signup form
+  // Dispatches the post request to the signup api with the data from the form
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     dispatch(signupUser(data));
   }

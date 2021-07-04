@@ -4,10 +4,12 @@ import {AxiosError} from "axios";
 
 const API_URL = "http://localhost:8080/api/user/"
 
+// Wrapper Interface containing the UserInterface used by the slice for the initialState types
 interface RootState {
   user: UserInterface
 }
 
+// Interface for initialState types of the slice
 interface UserInterface {
   username: String,
   email: String,
@@ -17,28 +19,35 @@ interface UserInterface {
   errorMessage: string
 }
 
+// Interface used by the register thunk on successful returns
 interface signupUserReturn {
   data: string,
   username: string,
   email: string
 }
 
+// Interface used by the register thunk for the form data passed to the thunk
 interface ISignupUser {
   username: String,
   email: String,
   password: String,
 }
 
+// Interface used by the login thunk on successful returns
 interface LoginUserReturn {
   data: string,
   email: string,
 }
 
+// Interface used by the login thunk for the form data passed to the thunk
 interface ILoginUser {
   email: String,
   password: String,
 }
 
+// Successful Returns: data, username, email
+// Takes for form data: username, email, password
+// Failed Returns: string containing the API error -> Most likely username already taken
 export const signupUser = createAsyncThunk<
     signupUserReturn,
     ISignupUser,
@@ -50,6 +59,9 @@ export const signupUser = createAsyncThunk<
     async (form_data, thunkApi) => {
       const { username, email, password } = form_data
       try {
+        // POST request to /api/user/register
+        // Returns User successfully created on success
+        // Returns "Username 'username' already taken" on failure
         const response = await axios.post(
             API_URL + "register", {
               "Username": username,
@@ -63,6 +75,7 @@ export const signupUser = createAsyncThunk<
         {
           return { ...data, username: username, email: email };
         }
+        // Might not need that code still have to make sure of it as if there is a bad request, it goes to the catch code
         else {
           return thunkApi.rejectWithValue(data);
         }
@@ -70,6 +83,7 @@ export const signupUser = createAsyncThunk<
       catch (err) {
         console.log("API error: ", err);
         let error: AxiosError<string> = err;
+        // In case the error returned by the API request isn't an HTTP response
         if(!error.response) {
           throw err
         }
@@ -79,6 +93,9 @@ export const signupUser = createAsyncThunk<
     }
 )
 
+// Successful Returns: data, email
+// Takes for form data: email, password
+// Failed Returns: string containing the API error -> Password or email is incorrect
 export const loginUser = createAsyncThunk<
     LoginUserReturn,
     ILoginUser,
@@ -90,6 +107,7 @@ export const loginUser = createAsyncThunk<
     async (form_data, thunkApi) => {
           const { email, password } = form_data;
           try {
+            // POST request to /api/user/login
             const response = await axios.post(
                 API_URL + "login", {
                   "Email": email,
@@ -127,6 +145,8 @@ export const userSlice = createSlice({
     errorMessage: '',
   } as UserInterface,
   reducers: {
+    // Clear the state
+    // Usually used after successful signup or login
     clearState: (state) => {
       state.isError = false;
       state.isSuccess = false;
@@ -185,6 +205,8 @@ export const userSlice = createSlice({
   },
 })
 
+// Export the userSelector with the according type
+// RootState wraps the initial state of the user slice in its .user property
 export const userSelector = (state: RootState) => state.user;
 
 export const { clearState } = userSlice.actions;

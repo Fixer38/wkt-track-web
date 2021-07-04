@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { useEffect } from "react";
 import { Fragment } from "react";
 
+// Interface used by react-hook-form for the form types
 type FormValues = {
   email: string;
   password: string;
@@ -22,19 +23,24 @@ const validationSchema = Yup.object().shape({
 
 const Login = () => {
   const dispatch = useDispatch();
+  // Define the userForm for react-hooks-form and adding the validation parameters contained in validationSchema
   const { register, formState: { errors }, handleSubmit } = useForm<FormValues>({
     resolver: yupResolver(validationSchema)
   });
   const history = useHistory();
 
+  // Get data from the user slice state
   const { isFetching, isSuccess, isError, errorMessage } = useSelector(
     userSelector
   );
-
+  // Used on submit of the login form
+  // Dispatches the post request to the login api with the data from the form
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     dispatch(loginUser(data));
   }
 
+  // useEffect will only be triggered if
+  // isSuccess and isError are updated
   useEffect(() => {
       if (isSuccess) {
         dispatch(clearState());
