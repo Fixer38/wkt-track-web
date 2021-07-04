@@ -45,7 +45,7 @@ namespace wkt_track_backend.Controllers
 
             if (!userCreateResult.Succeeded)
             {
-                return BadRequest(userCreateResult.Errors);
+                return BadRequest(userCreateResult.Errors.First().Description);
             }
 
             await _signInManager.SignInAsync(user, false);
