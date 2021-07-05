@@ -45,7 +45,7 @@ namespace wkt_track_backend.Controllers
 
             if (!userCreateResult.Succeeded)
             {
-                return BadRequest(userCreateResult.Errors);
+                return BadRequest(userCreateResult.Errors.First().Description);
             }
 
             await _signInManager.SignInAsync(user, false);
@@ -64,7 +64,7 @@ namespace wkt_track_backend.Controllers
                 return Unauthorized("The username or password is incorrect");
             }
 
-            var appUser = _userManager.Users.SingleOrDefault(user => user.Email == model.Email);
+            var appUser = _userManager.Users.SingleOrDefault(identityUser => identityUser.Email == model.Email);
             var refreshToken = GenerateRefreshToken();
             Response.Cookies.Append(
                 "refresh-token",
@@ -167,9 +167,9 @@ namespace wkt_track_backend.Controllers
     public class RegisterDto
     {
         [Required]
-        public string Email { get; set; }
-        [Required]
         public string Username { get; set; }
+        [Required]
+        public string Email { get; set; }
         [Required]
         [StringLength(30, ErrorMessage = "Password minimal length must be 6", MinimumLength = 6)]
         public string Password { get; set; }
