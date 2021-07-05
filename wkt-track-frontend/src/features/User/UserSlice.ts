@@ -2,6 +2,9 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from '../../services/api';
 import {AxiosError} from "axios";
 
+// TODO: Add logout action
+// TODO: Add logout component
+
 const API_URL = "http://localhost:8080/api/user/"
 
 // Wrapper Interface containing the UserInterface used by the slice for the initialState types
