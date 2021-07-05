@@ -13,6 +13,7 @@ interface RootState {
 interface UserInterface {
   username: String,
   email: String,
+  isLoggedIn: boolean,
   isFetching: boolean,
   isError: boolean,
   isSuccess: boolean,
@@ -139,6 +140,7 @@ export const userSlice = createSlice({
   initialState: {
     username: '',
     email: '',
+    isLoggedIn: false,
     isFetching: false,
     isError: false,
     isSuccess: false,
@@ -184,6 +186,7 @@ export const userSlice = createSlice({
     builder.addCase(loginUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
       state.isSuccess = true;
+      state.isLoggedIn = true;
       state.email = payload.email;
     });
     // login pending
