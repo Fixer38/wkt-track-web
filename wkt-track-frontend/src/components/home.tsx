@@ -2,8 +2,22 @@ import {Fragment, useCallback} from "react";
 import { Link } from "react-router-dom";
 import {useSelector} from "react-redux";
 import {userSelector} from "../features/User/UserSlice";
+import {AppBar, Button, createStyles, makeStyles, Theme, Toolbar, Typography} from "@material-ui/core";
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    title: {
+      flexGrow: 1,
+      textAlign: 'center',
+    },
+  }),
+);
 
 const Home = () => {
+  const classes = useStyles();
   const { isLoggedIn } = useSelector(
     userSelector
   );
@@ -16,23 +30,25 @@ const Home = () => {
     else {
       return (
         <Fragment>
-          <Link to="/signup">Signup</Link>
-          <Link to="/login">Login</Link>
+          <Button color="inherit"><Link to="/signup">Signup</Link></Button>
+          <Button color="inherit"><Link to="/login">Login</Link></Button>
         </Fragment>
       )
     }
   }, [isLoggedIn])
 
   return (
-    <Fragment>
-      <div>
-        <div className="navbar">
-          <Link to="/">Home</Link>
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            Wkt-Track
+          </Typography>
+          <Button color="inherit"><Link to="/home">Home</Link></Button>
           {renderIfLoggedIn()}
-        </div>
-        <h1>Home</h1>
-      </div>
-    </Fragment>
+        </Toolbar>
+      </AppBar>
+    </div>
   )
 }
 
