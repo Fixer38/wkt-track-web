@@ -19,8 +19,12 @@ const Home = () => {
     else {
       return (
         <Fragment>
-          <Link to="/signup">Signup</Link>
-          <Link to="/login">Login</Link>
+          <li className="mr-6">
+            <Link className="text-blue-500 hover:text-blue-800" to="/signup">Signup</Link>
+          </li>
+          <li className="mr-6">
+            <Link className="text-blue-500 hover:text-blue-800" to="/login">Login</Link>
+          </li>
         </Fragment>
       )
     }
@@ -28,7 +32,12 @@ const Home = () => {
 
   return (
     <div>
-
+      <ul className="flex">
+        <li className="mr-6">
+          <Link className="text-blue-500 hover:text-blue-800" to="/">Home</Link>
+        </li>
+        {renderIfLoggedIn()}
+      </ul>
     </div>
   )
 }
