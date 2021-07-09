@@ -1,6 +1,6 @@
 import Navbar from "./navbar";
 
-// TODO: Separate navbar into navbar component do display it on all pages
+// TODO: Save redux state to localStorage for persisting auth state
 // TODO: Create proper design
 
 const Home = () => {
