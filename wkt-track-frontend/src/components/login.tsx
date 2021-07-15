@@ -46,11 +46,17 @@ const Login = () => {
         dispatch(clearState());
         history.push('/');
       }
-      if (isError) {
+      /*if (isError) {
         console.log(errorMessage);
         dispatch(clearState());
-      }
+      }*/
     }, [isSuccess, isError]);
+
+  // Clear error message in case of refresh
+  // Called once on mount
+  useEffect(() => {
+    dispatch(clearState());
+  }, []);
 
   return (
     <Fragment>
@@ -94,7 +100,7 @@ const Login = () => {
             Login
           </button>
         </form>
-        {errorMessage &&
+        {isError &&
         <div>{errorMessage}</div>
         }
       </div>

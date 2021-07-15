@@ -2,6 +2,9 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from '../../services/api';
 import {AxiosError} from "axios";
 
+// TODO: Add logout action
+// TODO: Add logout component
+
 const API_URL = "http://localhost:8080/api/user/"
 
 // Wrapper Interface containing the UserInterface used by the slice for the initialState types
@@ -13,6 +16,7 @@ interface RootState {
 interface UserInterface {
   username: String,
   email: String,
+  isLoggedIn: boolean,
   isFetching: boolean,
   isError: boolean,
   isSuccess: boolean,
@@ -139,6 +143,7 @@ export const userSlice = createSlice({
   initialState: {
     username: '',
     email: '',
+    isLoggedIn: false,
     isFetching: false,
     isError: false,
     isSuccess: false,
@@ -160,6 +165,8 @@ export const userSlice = createSlice({
     builder.addCase(signupUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
       state.isSuccess = true;
+      state.isError = false;
+      state.errorMessage = "";
       state.email = payload.email;
       state.username = payload.username;
     });
@@ -183,7 +190,10 @@ export const userSlice = createSlice({
     // login fulfilled
     builder.addCase(loginUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
+      state.isError = false;
+      state.errorMessage = "";
       state.isSuccess = true;
+      state.isLoggedIn = true;
       state.email = payload.email;
     });
     // login pending

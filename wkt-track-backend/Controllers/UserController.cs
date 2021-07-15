@@ -84,7 +84,7 @@ namespace wkt_track_backend.Controllers
             await _ctx.SaveChangesAsync();
             return await GenerateJwt(appUser);
         }
-
+        
         [HttpPost]
         public async Task<object> RefreshToken()
         {

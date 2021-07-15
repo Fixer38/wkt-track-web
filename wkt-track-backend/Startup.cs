@@ -31,7 +31,10 @@ namespace wkt_track_backend
             services.AddDbContext<WktDbContext>(options =>
                 options.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? throw new InvalidOperationException()));
             // Configuring Identity with the DB context created above
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+                {
+                    options.User.RequireUniqueEmail = true;
+                })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<WktDbContext>()
                 .AddDefaultTokenProviders();
