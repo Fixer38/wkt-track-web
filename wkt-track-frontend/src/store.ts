@@ -1,28 +1,20 @@
 import { userSlice } from "./features/User/UserSlice";
-import {configureStore} from "@reduxjs/toolkit";
+import {combineReducers, configureStore} from "@reduxjs/toolkit";
+import storage from "redux-persist/lib/storage";
+import { persistReducer } from "redux-persist";
 
-const saveToLocalStorage = (state: any) => {
-  try {
-    localStorage.setItem('state', JSON.stringify(state));
-  }
-  catch (e) {
-    console.error(e);
-  }
-}
+const persistConfig = {
+  key: 'root',
+  storage: storage,
+  whitelist: ['user']
+};
 
-const loadFromStorage = () => {
-  try {
-    const stateStr = localStorage.getItem('state');
-    return stateStr ? JSON.parse(stateStr) : undefined;
-  }
-  catch (e) {
-    console.error(e);
-    return undefined;
-  }
-}
+const reducers = combineReducers({
+  user: userSlice.reducer
+});
+
+const pReducer = persistReducer(persistConfig, reducers)
 
 export default configureStore({
-  reducer: {
-    user: userSlice.reducer,
-  }
+  reducer: pReducer
 })

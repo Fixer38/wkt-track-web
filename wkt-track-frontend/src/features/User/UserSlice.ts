@@ -165,6 +165,8 @@ export const userSlice = createSlice({
     builder.addCase(signupUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
       state.isSuccess = true;
+      state.isError = false;
+      state.errorMessage = "";
       state.email = payload.email;
       state.username = payload.username;
     });
@@ -188,6 +190,8 @@ export const userSlice = createSlice({
     // login fulfilled
     builder.addCase(loginUser.fulfilled, (state, { payload }) => {
       state.isFetching = false;
+      state.isError = false;
+      state.errorMessage = "";
       state.isSuccess = true;
       state.isLoggedIn = true;
       state.email = payload.email;
