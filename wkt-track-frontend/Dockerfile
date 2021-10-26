@@ -1,5 +1,5 @@
 # Pull latest node image
-FROM node:14.17.0-alpine
+FROM node:14.18.1-alpine
 
 # Création du dossier de travail /app dans le container
 WORKDIR /app

@@ -1,5 +1,5 @@
 # ./Backend/Dockerfile
-# Récupérer dotnetcore sdk version 3.1
+# Récupérer dotnetcore sdk version 5.0
 FROM mcr.microsoft.com/dotnet/sdk:5.0
 
 # Copie du script permettant l'initalisation dans le container
